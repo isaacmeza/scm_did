@@ -1,5 +1,8 @@
+DiD
+===
+
 Methodology
-===========
+-----------
 
 Data consists of an unbalanced panel of 128056 households for which we
 have data (at least) for the period spanning 2013 and the first 3 months
@@ -56,9 +59,6 @@ expenditure of individual $i$. Finally, $H$ and $L$ are the respective
 cuts on the distribution to define Treatment/Control groups. Note that
 event study corresponds to $t=0$.\
 
-Results
-=======
-
 Once we find the optimal \`\`cuts" on the distribution of total taxable
 expenditure and define our pure Treatment/Control group, we graph
 
@@ -80,37 +80,92 @@ $$\begin{aligned}
 
 []
 
-<span>0.49</span> ![image](did_1_1_tot_cal.pdf)
-
-<span>0.49</span> ![image](betas_did_tot_cal_1_1.pdf)
-
-<span>0.49</span> ![image](did_1_1_hcf_kcal.pdf)
-
 <span>0.49</span> ![image](betas_did_hcf_kcal_1_1.pdf)
 
-<span>0.49</span> ![image](did_1_1_sd_kcal.pdf)
-
-<span>0.49</span> ![image](betas_did_sd_kcal_1_1.pdf)
+<span>0.49</span> ![image](betas_did_sd_kcal_2_1.pdf)
 
 <span>*Notes:*</span> <span>*Do file: *
 `did.do , beta_coef_did.do `</span>
+
+SCM
+===
+
+Methodology
+-----------
+
+The data corresponding to the years 2013 and 2014 at the household-week
+level of the consumption of various products that were classified into
+food and beverages manually according to (Arturo’s criterion). In order
+to have the same product classification, a product homologation was
+carried out between Mexico (MEX) and Central America (CAM), this with
+the purpose of having a better synthetic control for MEX households;
+keeping 11 drinks and 17 food. In this homologation, the units of
+consumption of the products were reviewed manually and for each one, as
+well as the price expressed in the same currency, taking care that there
+was consistency between the volume and price for the products between
+the two regions. For the missing values, an imputation was made
+according to a linear regression between volume and price with region
+fixed effects and linear time trend, for each of the products.\
+
+Likewise, two products were labeled as those subject to tax: soft drinks
+and cookies, since these are the products that were identified as those
+unambiguously subject to a tax, in addition to the fact that the tax
+rate was the highest for these products.\
+
+Weekly expenditure per household was added for each of the products and
+in order to smooth the series, it collapsed (on average) at the monthly
+level per household, so that the unit of observation remained as the
+average consumption and expenditure at the week for a month at the
+household level.\
+
+The panel was balanced so that we had households with data for the pre-
+and post-treatment date and the gaps between the data were filled in
+with a polygonal interpolation, that is, the average between the
+observation $ t-1 $ and $ t + 1 $ to impute the value of the observation
+at $ t $, when it was missing. Finally, a moving average with 3 lags, 2
+terms ahead and the current observation was used, so that the smoother
+applied is
+
+$$(1/6)[x_{t-3} + x_{t-2} + x_{t-1} + x_{t} + x_{t+1} + x_{t+2}]$$ This
+resulted in a balanced panel consisting of 7,401 households, of which
+5447 were treatment units, that is, MEX households.\
+
+The next step consisted of finding clusters of households for separate
+treatment and control, that is, MEX and CAM:
+
+Given the set $\lbrace x_1,x_2,\ldots,x_n\rbrace$ donde
+$x_i=(x_i^{-12},x_i^{-11},\ldots,x_i^{11})$ is a vector of consumption
+for the pre- and post-treatment periods, and $ n $ corresponds to the
+number of households. The goal is to partition the $ n $ observations
+into $ k $ clusters $S:=\lbrace S_1,S_2,\ldots S_k\rbrace$, so that the
+sum of squares within the clusters is minimized, formally:
+
+$$\operatorname{argmin}_{S}\sum_{i=1}^{k}\sum_{x\in S_i}||x-\mu_i||^2$$
+where $\mu_i $ is the median [^2] of the points in $ S_i $
+
+This with the purpose of reducing the search space for the synthetic
+control, exploring the optimal weights between the clusters of CAM
+households and thus speeding up the computation of the optimization
+process. In addition, each cluster would reduce, by construction, the
+variance or dispersion of the variables of interest among the households
+that compose it and thus we would be left (at least in theory, with less
+sparse solutions).\
+
+This is how we obtain two databases (one for SD and one for HCF) with
+400 clusters for MEX and 75 for CAM. Before proceeding with the
+estimation, the data were standardized at the household level.\
+
+To deal with the problem of multiple units treated, the methodology [^3]
+proposed in @gsynth or what in @abadie was followed called *the standard
+synthetic control estimate*, provided a synthetic control is constructed
+for each treated unit and the treatment effect is estimated for the
+post-treatment periods and these effects are averaged to have an average
+treatment effect, and estimated the confidence region using a
+*Jackknife* estimator for the variance.\
 
 []
 
-<span>0.49</span> ![image](did_1_1_tot_cal_placebo.pdf)
-
-<span>0.49</span> ![image](betas_did_tot_cal_placebo_1_1.pdf)
-
-<span>0.49</span> ![image](did_1_1_nonhcf_kcal.pdf)
-
-<span>0.49</span> ![image](betas_did_nonhcf_kcal_1_1.pdf)
-
-<span>0.49</span> ![image](did_1_1_nonsd_kcal.pdf)
-
-<span>0.49</span> ![image](betas_did_nonsd_kcal_1_1.pdf)
-
-<span>*Notes:*</span> <span>*Do file: *
-`did.do , beta_coef_did.do `</span>
+<span>0.49</span> ![image](SD_scm_smooth_99.pdf)
 
 [^1]: As recommended by Borusyak and Jaravel (2016), but unlike McCrary
     (2007) and most event study papers, include all relative time
@@ -124,3 +179,9 @@ $$\begin{aligned}
     which is why Borusyak and Jaravel (2016) recommend having a pure
     control, which pin down the calendar time fixed effects without
     having to make these additional assumptions.
+
+[^2]: If the mean is used instead of the median, the problem is
+    equivalent to
+    $$\operatorname{argmin}_{S}\sum_{i=1}^{k}|S_i|Var S_i$$
+
+[^3]: Using the libraries Synth and bootstrap of R

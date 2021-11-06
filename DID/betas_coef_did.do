@@ -53,7 +53,7 @@ gen year=year(dofm(monthly))
 *DiD Regression	
 	
 do "$directorio\DoFiles\did_reg.do" ///
-	sd_kcal 95 130 2 1
+	sd_kcal 100 140 2 1
 do "$directorio\DoFiles\did_reg.do" ///
 	hcf_kcal 70 75 1 1	
 	
