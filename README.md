@@ -69,7 +69,7 @@ expenditure and define our pure Treatment/Control group, we graph
 The following graph shows the distribution (cut at the 95th percentile)
 of the total taxable expenditure.
 
-![image](dist_te.pdf)
+![alt text](dist_te.pdf)
 
 <span>*Notes:* </span> <span>*Do file: * `dist_totalexp.do`</span>
 
@@ -78,11 +78,9 @@ The DiD specification is the following:
 $$\begin{aligned}
     y_{it}=\sum_{k=-12}^{12}\alpha_{k}\mathds{1}(t=k) +\sum_{k=-12}^{12}\beta_{k}\mathds{1}(i=T,k=t)+\gamma\mathds{1}(i=T)-\lambda_i+\epsilon_{it}\end{aligned}$$
 
-[]
+![alt text](betas_did_hcf_kcal_1_1.pdf)
 
-<span>0.49</span> ![image](betas_did_hcf_kcal_1_1.pdf)
-
-<span>0.49</span> ![image](betas_did_sd_kcal_2_1.pdf)
+![alt text](betas_did_sd_kcal_2_1.pdf)
 
 <span>*Notes:*</span> <span>*Do file: *
 `did.do , beta_coef_did.do `</span>
@@ -163,9 +161,7 @@ post-treatment periods and these effects are averaged to have an average
 treatment effect, and estimated the confidence region using a
 *Jackknife* estimator for the variance.\
 
-[]
-
-<span>0.49</span> ![image](SD_scm_smooth_99.pdf)
+![alt text](SD_scm_smooth_99.pdf)
 
 [^1]: As recommended by Borusyak and Jaravel (2016), but unlike McCrary
     (2007) and most event study papers, include all relative time
